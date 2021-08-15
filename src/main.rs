@@ -11,7 +11,8 @@ struct RowValues (Value, Value, Value);
 
 enum Value {
     Naught,
-    Cross
+    Cross,
+    None,
 }
 
 impl std::fmt::Display for Value {
@@ -19,6 +20,7 @@ impl std::fmt::Display for Value {
         match &self {
             Value::Naught => write!(f, "O"),
             Value::Cross => write!(f, "X"),
+            Value::None => write!(f, " "),
         }
     }
 }
@@ -64,7 +66,7 @@ fn print_grid(_size: &i32) {
     };
     let middle_row = Row {
         position: RowPosition::Middle,
-        values: RowValues(Value::Naught, Value::Cross, Value::Naught),
+        values: RowValues(Value::None, Value::Cross, Value::Naught),
     };
     let bottom_row = Row {
         position: RowPosition::Bottom,
