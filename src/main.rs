@@ -1,5 +1,5 @@
 use std::fmt;
-// use std::io;
+use std::io;
 // use rand::Rng;
 
 struct Row<'a> {
@@ -7,6 +7,7 @@ struct Row<'a> {
     values: &'a [Value; 3],
 }
 
+#[derive(Clone, Copy)]
 enum Value {
     Naught,
     Cross,
@@ -16,8 +17,8 @@ enum Value {
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match &self {
-            Value::Naught => write!(f, "O"),
-            Value::Cross => write!(f, "X"),
+            Value::Naught => write!(f, "○"),
+            Value::Cross => write!(f, "⨯"),
             Value::None => write!(f, " "),
         }
     }
@@ -57,7 +58,7 @@ fn print_row(row: Row) {
     }
 }
 
-fn print_grid(grid: [[Value; 3]; 3]) {
+fn print_grid(grid: &mut[[Value; 3]; 3]) {
     let top_row = Row {
         position: RowPosition::Top,
         values: &grid[0],
@@ -76,10 +77,48 @@ fn print_grid(grid: [[Value; 3]; 3]) {
 }
 
 fn main() {
-    let grid: [[Value; 3]; 3] = [
-        [Value::None, Value::Cross, Value::None],
-        [Value::None, Value::None, Value::Naught],
-        [Value::None, Value::Cross, Value::None],
+
+    let mut grid: [[Value; 3]; 3] = [
+        [Value::None, Value::None, Value::None],
+        [Value::None, Value::None, Value::None],
+        [Value::None, Value::None, Value::None],
     ];
-    print_grid(grid);
+
+    let mut player: Value = Value::Cross;
+
+    print_grid(&mut grid);
+
+    loop {
+
+        println!("Player {}, choose your cell", player);
+
+        let mut cell = String::new();
+
+        io::stdin()
+            .read_line(&mut cell)
+            .expect("Failed to read line");
+
+        let cell: usize = match cell.trim().parse() {
+            Ok(num) => num,
+            Err(_) => continue
+        };
+
+        grid[cell][cell] = player;
+
+        player = match player {
+            Value::Cross => Value::Naught,
+            Value::Naught => Value::Cross,
+            Value::None => Value::None,
+        };
+
+        println!(" ");
+        println!(" ");
+        println!(" ");
+        println!(" ");
+        println!(" ");
+        println!(" ");
+
+        print_grid(&mut grid);
+
+    }
 }
