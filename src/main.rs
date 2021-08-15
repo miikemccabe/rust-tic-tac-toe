@@ -2,11 +2,9 @@ use std::fmt;
 // use std::io;
 // use rand::Rng;
 
-struct Grid (Row, Row, Row);
-
-struct Row {
+struct Row<'a> {
     position: RowPosition,
-    values: [Option<Value>; 3],
+    values: &'a [Value; 3],
 }
 
 enum Value {
@@ -35,9 +33,9 @@ fn print_row_border() {
     println!("+----------+----------+----------+");
 }
 
-fn print_row_middle(values: &[Option<Value>; 3]) {
+fn print_row_middle(values: &[Value; 3]) {
     println!("|          |          |          |");
-    println!("|     {}    |     {}    |     {}    |", values[0].as_ref().unwrap(), values[1].as_ref().unwrap(), values[2].as_ref().unwrap());
+    println!("|     {}    |     {}    |     {}    |", values[0], values[1], values[2]);
     println!("|          |          |          |");
 }
 
@@ -45,21 +43,21 @@ fn print_row(row: Row) {
     match row.position {
         RowPosition::Top => { 
             print_row_border();
-            print_row_middle(&row.values);
+            print_row_middle(row.values);
         },
         RowPosition::Middle => {
             print_row_border();
-            print_row_middle(&row.values);
+            print_row_middle(row.values);
             print_row_border();
         },
         RowPosition::Bottom => {
-            print_row_middle(&row.values);
+            print_row_middle(row.values);
             print_row_border();
         }
     }
 }
 
-fn print_grid(grid: &[[Option<Value>; 3]; 3]) {
+fn print_grid(grid: [[Value; 3]; 3]) {
     let top_row = Row {
         position: RowPosition::Top,
         values: &grid[0],
@@ -78,10 +76,10 @@ fn print_grid(grid: &[[Option<Value>; 3]; 3]) {
 }
 
 fn main() {
-    let grid: [[Option<Value>; 3]; 3] = [
-        [None, None, None],
-        [None, None, None],
-        [None, None, None],
+    let grid: [[Value; 3]; 3] = [
+        [Value::None, Value::Cross, Value::None],
+        [Value::None, Value::None, Value::Naught],
+        [Value::None, Value::Cross, Value::None],
     ];
-    print_grid(&grid);
+    print_grid(grid);
 }
