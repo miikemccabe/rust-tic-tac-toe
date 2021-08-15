@@ -98,12 +98,20 @@ fn main() {
             .read_line(&mut cell)
             .expect("Failed to read line");
 
-        let cell: usize = match cell.trim().parse() {
-            Ok(num) => num,
-            Err(_) => continue
+        let choice = cell.trim();
+
+        let choice: Vec<&str> = choice.split("").collect();
+
+        let row =  match choice[1].to_lowercase().as_ref() {
+            "a" => 0,
+            "b" => 1,
+            "c" => 2,
+            _ => 0
         };
 
-        grid[cell][cell] = player;
+        let column = choice[2].parse::<usize>().unwrap_or(0);
+
+        grid[row][column] = player;
 
         player = match player {
             Value::Cross => Value::Naught,
