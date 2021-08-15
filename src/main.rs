@@ -10,15 +10,15 @@ struct Row {
 struct RowValues (Value, Value, Value);
 
 enum Value {
-    Naught(String),
-    Cross(String)
+    Naught,
+    Cross
 }
 
 impl std::fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match &self {
-            Value::Naught(val) => write!(f, "{}", val),
-            Value::Cross(val) => write!(f, "{}", val),
+            Value::Naught => write!(f, "O"),
+            Value::Cross => write!(f, "X"),
         }
     }
 }
@@ -60,15 +60,15 @@ fn print_row(row: Row) {
 fn print_grid(_size: &i32) {
     let top_row = Row {
         position: RowPosition::Top,
-        values: RowValues(Value::Cross(String::from("X")), Value::Naught(String::from("O")), Value::Cross(String::from("X"))),
+        values: RowValues(Value::Cross, Value::Naught, Value::Cross),
     };
     let middle_row = Row {
         position: RowPosition::Middle,
-        values: RowValues(Value::Naught(String::from("O")), Value::Cross(String::from("X")), Value::Naught(String::from("O"))),
+        values: RowValues(Value::Naught, Value::Cross, Value::Naught),
     };
     let bottom_row = Row {
         position: RowPosition::Bottom,
-        values: RowValues(Value::Cross(String::from("X")), Value::Naught(String::from("O")), Value::Cross(String::from("X"))),
+        values: RowValues(Value::Cross, Value::Naught, Value::Cross),
     };
     print_row(top_row);
     print_row(middle_row);
