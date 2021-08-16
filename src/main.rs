@@ -2,11 +2,6 @@ use std::fmt;
 use std::io;
 // use rand::Rng;
 
-struct Row<'a> {
-    position: RowPosition,
-    values: &'a [Value; 3],
-}
-
 #[derive(Clone, Copy)]
 enum Value {
     Naught,
@@ -24,56 +19,21 @@ impl std::fmt::Display for Value {
     }
 }
 
-enum RowPosition {
-    Top,
-    Middle,
-    Bottom,
-}
-
-fn print_row_border() {
-    println!("+----------+----------+----------+");
-}
-
-fn print_row_middle(values: &[Value; 3]) {
+fn print_row(values: &[Value; 3], row_label: String) {
     println!("|          |          |          |");
-    println!("|     {}    |     {}    |     {}    |", values[0], values[1], values[2]);
+    println!("|     {}    |     {}    |     {}    |   {}", values[0], values[1], values[2], row_label);
     println!("|          |          |          |");
-}
-
-fn print_row(row: Row) {
-    match row.position {
-        RowPosition::Top => { 
-            print_row_border();
-            print_row_middle(row.values);
-        },
-        RowPosition::Middle => {
-            print_row_border();
-            print_row_middle(row.values);
-            print_row_border();
-        },
-        RowPosition::Bottom => {
-            print_row_middle(row.values);
-            print_row_border();
-        }
-    }
 }
 
 fn print_grid(grid: &mut[[Value; 3]; 3]) {
-    let top_row = Row {
-        position: RowPosition::Top,
-        values: &grid[0],
-    };
-    let middle_row = Row {
-        position: RowPosition::Middle,
-        values: &grid[1],
-    };
-    let bottom_row = Row {
-        position: RowPosition::Bottom,
-        values: &grid[2],
-    };
-    print_row(top_row);
-    print_row(middle_row);
-    print_row(bottom_row);
+    println!("     1           2          3     ");
+    println!("+----------+----------+----------+");
+    print_row(&grid[0], String::from("A"));
+    println!("+----------+----------+----------+");
+    print_row(&grid[1], String::from("B"));
+    println!("+----------+----------+----------+");
+    print_row(&grid[2], String::from("C"));
+    println!("+----------+----------+----------+");
 }
 
 fn main() {
