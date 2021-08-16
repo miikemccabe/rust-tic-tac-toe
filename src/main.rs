@@ -100,16 +100,18 @@ fn main() {
 
         let choice = cell.trim();
 
-        let choice: Vec<&str> = choice.split("").filter(|x| !x.is_empty()).collect();
+        let mut choice = choice.split("").filter(|x| !x.is_empty()).collect::<Vec<&str>>();
 
-        let row =  match choice[0].to_lowercase().as_ref() {
+        choice.sort_unstable();
+
+        let column = choice[0].parse::<usize>().unwrap_or(0);
+
+        let row =  match choice[1].to_lowercase().as_ref() {
             "a" => 0,
             "b" => 1,
             "c" => 2,
             _ => 0
         };
-
-        let column = choice[1].parse::<usize>().unwrap_or(0);
 
         grid[row][column - 1] = player;
 
