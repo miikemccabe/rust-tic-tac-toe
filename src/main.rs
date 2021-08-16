@@ -73,13 +73,23 @@ fn main() {
             _ => 0
         };
 
-        grid[row][column - 1] = player;
+        let mut success = false;
 
-        player = match player {
-            Value::Cross => Value::Naught,
-            Value::Naught => Value::Cross,
-            Value::None => Value::None,
+        grid[row][column - 1] = match grid[row][column - 1] {
+            Value::None => {
+                success = true;
+                player
+            },
+            _ => grid[row][column - 1]
         };
+
+        if success {
+            player = match player {
+                Value::Cross => Value::Naught,
+                Value::Naught => Value::Cross,
+                Value::None => Value::None,
+            };
+        }
 
         println!(" ");
         println!(" ");
