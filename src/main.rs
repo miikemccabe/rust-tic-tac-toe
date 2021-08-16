@@ -60,8 +60,11 @@ fn main() {
 
         let choice = cell.trim();
 
+        // The user should enter a two digit coordinate for the cell like A2 or 3B. Splitting on "" produces an empty
+        // string on either end of the array so we filter these about before collecting them as a Vector of &str.
         let mut choice = choice.split("").filter(|x| !x.is_empty()).collect::<Vec<&str>>();
 
+        // Sort the array so that the user can enter the row or column in either order
         choice.sort_unstable();
 
         let column = choice[0].parse::<usize>().unwrap_or(0);
@@ -75,6 +78,7 @@ fn main() {
 
         let mut success = false;
 
+        // Set the selected cell to the current player
         grid[row][column - 1] = match grid[row][column - 1] {
             Value::None => {
                 success = true;
@@ -83,6 +87,7 @@ fn main() {
             _ => grid[row][column - 1]
         };
 
+        // If all went well, swap the current player
         if success {
             player = match player {
                 Value::Cross => Value::Naught,
