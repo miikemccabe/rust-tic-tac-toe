@@ -25,7 +25,7 @@ fn print_row(values: &[Value; 3], row_label: String) {
     println!("|          |          |          |");
 }
 
-fn print_grid(grid: &mut[[Value; 3]; 3]) {
+fn print_grid(grid: &[[Value; 3]; 3]) {
     println!("     1           2          3     ");
     println!("+----------+----------+----------+");
     print_row(&grid[0], String::from("A"));
@@ -46,7 +46,7 @@ fn main() {
 
     let mut player: Value = Value::Cross;
 
-    print_grid(&mut grid);
+    print_grid(&grid);
 
     loop {
 
@@ -103,7 +103,7 @@ fn main() {
         println!(" ");
         println!(" ");
 
-        print_grid(&mut grid);
+        print_grid(&grid);
 
     }
 }
