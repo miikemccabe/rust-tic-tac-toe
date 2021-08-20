@@ -2,6 +2,50 @@ use std::fmt;
 use std::io;
 // use rand::Rng;
 
+struct Game {
+    grid: [[Value; 3]; 3],
+    player: Value,
+}
+
+impl Game {
+    fn display(&self) {
+        print_grid(&self.grid);
+    }
+
+    fn reset_board(&mut self) {
+        self.grid = [
+            [Value::None, Value::None, Value::None],
+            [Value::None, Value::None, Value::None],
+            [Value::None, Value::None, Value::None],
+        ];
+
+        self.player = Value::Cross;
+    }
+
+    fn toggle_player(&mut self) {
+        self.player = match self.player {
+            Value::Cross => Value::Naught,
+            Value::Naught => Value::Cross,
+            Value::None => Value::None,
+        }
+    }
+
+    fn play_turn(&mut self, row: usize, col: usize) {
+        let mut success = false;
+        self.grid[row][col] = match self.grid[row][col] {
+            Value::None => {
+                success = true;
+                self.player
+            },
+            _ => self.grid[row][col]
+        };
+
+        if success {
+            self.toggle_player();
+        }
+    }
+}
+
 #[derive(Clone, Copy)]
 enum Value {
     Naught,
@@ -38,19 +82,20 @@ fn print_grid(grid: &[[Value; 3]; 3]) {
 
 fn main() {
 
-    let mut grid: [[Value; 3]; 3] = [
-        [Value::None, Value::None, Value::None],
-        [Value::None, Value::None, Value::None],
-        [Value::None, Value::None, Value::None],
-    ];
+    let mut game = Game {
+        grid: [
+            [Value::None, Value::None, Value::None],
+            [Value::None, Value::None, Value::None],
+            [Value::None, Value::None, Value::None],
+        ],
+        player: Value::Cross
+    };
 
-    let mut player: Value = Value::Cross;
-
-    print_grid(&grid);
+    game.display();
 
     loop {
 
-        println!("Player {}, choose your cell", player);
+        println!("Player {}, choose your cell", game.player);
 
         let mut cell = String::new();
 
@@ -60,6 +105,12 @@ fn main() {
 
         let choice = cell.trim();
 
+        if choice == "c" {
+            game.reset_board();
+            game.display();
+            continue;
+        }
+
         // The user should enter a two digit coordinate for the cell like A2 or 3B. Splitting on "" produces an empty
         // string on either end of the array so we filter these about before collecting them as a Vector of &str.
         let mut choice = choice.split("").filter(|x| !x.is_empty()).collect::<Vec<&str>>();
@@ -67,7 +118,7 @@ fn main() {
         // Sort the array so that the user can enter the row or column in either order
         choice.sort_unstable();
 
-        let column = choice[0].parse::<usize>().unwrap_or(0);
+        let column = choice[0].parse::<usize>().unwrap_or(0) - 1;
 
         let row =  match choice[1].to_lowercase().as_ref() {
             "a" => 0,
@@ -76,25 +127,7 @@ fn main() {
             _ => 0
         };
 
-        let mut success = false;
-
-        // Set the selected cell to the current player
-        grid[row][column - 1] = match grid[row][column - 1] {
-            Value::None => {
-                success = true;
-                player
-            },
-            _ => grid[row][column - 1]
-        };
-
-        // If all went well, swap the current player
-        if success {
-            player = match player {
-                Value::Cross => Value::Naught,
-                Value::Naught => Value::Cross,
-                Value::None => Value::None,
-            };
-        }
+        game.play_turn(row, column);
 
         println!(" ");
         println!(" ");
@@ -103,7 +136,7 @@ fn main() {
         println!(" ");
         println!(" ");
 
-        print_grid(&grid);
+        game.display();
 
     }
 }
