@@ -2,8 +2,95 @@ use std::fmt;
 use std::io;
 // use rand::Rng;
 
+struct Board {
+    grid: [[CellValue; 3]; 3]
+}
+
+impl Board {
+    fn new() -> Self {
+        Board {
+            grid: [
+                [CellValue::Empty, CellValue::Empty, CellValue::Empty],
+                [CellValue::Empty, CellValue::Empty, CellValue::Empty],
+                [CellValue::Empty, CellValue::Empty, CellValue::Empty],
+            ]
+        }
+    }
+
+    fn clear(&mut self) {
+        self.grid = [
+            [CellValue::Empty, CellValue::Empty, CellValue::Empty],
+            [CellValue::Empty, CellValue::Empty, CellValue::Empty],
+            [CellValue::Empty, CellValue::Empty, CellValue::Empty],
+        ]
+    }
+
+    fn get_cell(&self, row: usize, col: usize) -> Option<&Player> {
+        match &self.grid[row][col] {
+            CellValue::Player(player) => Some(player),
+            CellValue::Empty => None
+        }
+    }
+
+    fn set_cell(&mut self, row: usize, col: usize, value: Player) -> Result<(), ()> {
+
+        let mut success = false;
+        let cell = self.get_cell(row, col);
+
+        self.grid[row][col] = match cell {
+            None => {
+                success = true;
+                CellValue::Player(value)
+            },
+            Some(player) => CellValue::Player(*player)
+        };
+
+        match success {
+            true => Ok(()),
+            false => Err(())
+        }
+    }
+
+    fn print_row(&self, row: usize) {
+        let row_label = match row {
+            0 => String::from("A"),
+            1 => String::from("B"),
+            2 => String::from("C"),
+            _ => String::from("")
+        };
+        println!("|          |          |          |");
+        println!("|     {}    |     {}    |     {}    |   {}", self.grid[row][0], self.grid[row][1], self.grid[row][2], row_label);
+        println!("|          |          |          |");
+    }
+
+    fn display(&self) {
+        println!("     1           2          3     ");
+        println!("+----------+----------+----------+");
+        self.print_row(0);
+        println!("+----------+----------+----------+");
+        self.print_row(1);
+        println!("+----------+----------+----------+");
+        self.print_row(2);
+        println!("+----------+----------+----------+");
+    }
+}
+
+enum CellValue {
+    Player(Player),
+    Empty
+}
+
+impl std::fmt::Display for CellValue {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match &self {
+            CellValue::Player(player) => player.fmt(f),
+            CellValue::Empty => write!(f, " ")
+        }
+    }
+}
+
 struct Game {
-    grid: [[Player; 3]; 3],
+    board: Board,
     player: Player,
 }
 
@@ -11,50 +98,31 @@ impl Game {
 
     fn new() -> Self {
         Game { 
-            grid: [
-                [Player::None, Player::None, Player::None],
-                [Player::None, Player::None, Player::None],
-                [Player::None, Player::None, Player::None],
-            ],
+            board: Board::new(),
             player: Player::Cross
         }
     }
 
     fn display(&self) {
-        print_grid(&self.grid);
+        self.board.display();
     }
 
     fn reset_board(&mut self) {
-        self.grid = [
-            [Player::None, Player::None, Player::None],
-            [Player::None, Player::None, Player::None],
-            [Player::None, Player::None, Player::None],
-        ];
-
+        self.board.clear();
         self.player = Player::Cross;
     }
 
     fn toggle_player(&mut self) {
         self.player = match self.player {
             Player::Cross => Player::Naught,
-            Player::Naught => Player::Cross,
-            Player::None => Player::None,
+            Player::Naught => Player::Cross
         }
     }
 
     fn play_turn(&mut self, row: usize, col: usize) {
-        let mut success = false;
-        let cell = self.grid[row][col];
-        self.grid[row][col] = match cell {
-            Player::None => {
-                success = true;
-                self.player
-            },
-            _ => cell
-        };
-
-        if success {
-            self.toggle_player();
+        match self.board.set_cell(row, col, self.player) {
+            Ok(()) => self.toggle_player(),
+            Err(()) => ()
         }
     }
 }
@@ -62,35 +130,16 @@ impl Game {
 #[derive(Clone, Copy)]
 enum Player {
     Naught,
-    Cross,
-    None
+    Cross
 }
 
 impl std::fmt::Display for Player {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match &self {
             Player::Naught => write!(f, "○"),
-            Player::Cross => write!(f, "⨯"),
-            Player::None => write!(f, " "),
+            Player::Cross => write!(f, "⨯")
         }
     }
-}
-
-fn print_row(values: &[Player; 3], row_label: String) {
-    println!("|          |          |          |");
-    println!("|     {}    |     {}    |     {}    |   {}", values[0], values[1], values[2], row_label);
-    println!("|          |          |          |");
-}
-
-fn print_grid(grid: &[[Player; 3]; 3]) {
-    println!("     1           2          3     ");
-    println!("+----------+----------+----------+");
-    print_row(&grid[0], String::from("A"));
-    println!("+----------+----------+----------+");
-    print_row(&grid[1], String::from("B"));
-    println!("+----------+----------+----------+");
-    print_row(&grid[2], String::from("C"));
-    println!("+----------+----------+----------+");
 }
 
 fn main() {
