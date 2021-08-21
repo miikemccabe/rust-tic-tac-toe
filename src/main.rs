@@ -8,6 +8,18 @@ struct Game {
 }
 
 impl Game {
+
+    fn new() -> Self {
+        Game { 
+            grid: [
+                [Value::None, Value::None, Value::None],
+                [Value::None, Value::None, Value::None],
+                [Value::None, Value::None, Value::None],
+            ],
+            player: Value::Cross
+        }
+    }
+
     fn display(&self) {
         print_grid(&self.grid);
     }
@@ -32,12 +44,13 @@ impl Game {
 
     fn play_turn(&mut self, row: usize, col: usize) {
         let mut success = false;
-        self.grid[row][col] = match self.grid[row][col] {
+        let cell = self.grid[row][col];
+        self.grid[row][col] = match cell {
             Value::None => {
                 success = true;
                 self.player
             },
-            _ => self.grid[row][col]
+            _ => cell
         };
 
         if success {
@@ -82,14 +95,7 @@ fn print_grid(grid: &[[Value; 3]; 3]) {
 
 fn main() {
 
-    let mut game = Game {
-        grid: [
-            [Value::None, Value::None, Value::None],
-            [Value::None, Value::None, Value::None],
-            [Value::None, Value::None, Value::None],
-        ],
-        player: Value::Cross
-    };
+    let mut game = Game::new();
 
     game.display();
 
