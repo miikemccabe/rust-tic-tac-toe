@@ -3,8 +3,8 @@ use std::io;
 // use rand::Rng;
 
 struct Game {
-    grid: [[Value; 3]; 3],
-    player: Value,
+    grid: [[Player; 3]; 3],
+    player: Player,
 }
 
 impl Game {
@@ -12,11 +12,11 @@ impl Game {
     fn new() -> Self {
         Game { 
             grid: [
-                [Value::None, Value::None, Value::None],
-                [Value::None, Value::None, Value::None],
-                [Value::None, Value::None, Value::None],
+                [Player::None, Player::None, Player::None],
+                [Player::None, Player::None, Player::None],
+                [Player::None, Player::None, Player::None],
             ],
-            player: Value::Cross
+            player: Player::Cross
         }
     }
 
@@ -26,19 +26,19 @@ impl Game {
 
     fn reset_board(&mut self) {
         self.grid = [
-            [Value::None, Value::None, Value::None],
-            [Value::None, Value::None, Value::None],
-            [Value::None, Value::None, Value::None],
+            [Player::None, Player::None, Player::None],
+            [Player::None, Player::None, Player::None],
+            [Player::None, Player::None, Player::None],
         ];
 
-        self.player = Value::Cross;
+        self.player = Player::Cross;
     }
 
     fn toggle_player(&mut self) {
         self.player = match self.player {
-            Value::Cross => Value::Naught,
-            Value::Naught => Value::Cross,
-            Value::None => Value::None,
+            Player::Cross => Player::Naught,
+            Player::Naught => Player::Cross,
+            Player::None => Player::None,
         }
     }
 
@@ -46,7 +46,7 @@ impl Game {
         let mut success = false;
         let cell = self.grid[row][col];
         self.grid[row][col] = match cell {
-            Value::None => {
+            Player::None => {
                 success = true;
                 self.player
             },
@@ -60,29 +60,29 @@ impl Game {
 }
 
 #[derive(Clone, Copy)]
-enum Value {
+enum Player {
     Naught,
     Cross,
     None
 }
 
-impl std::fmt::Display for Value {
+impl std::fmt::Display for Player {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match &self {
-            Value::Naught => write!(f, "○"),
-            Value::Cross => write!(f, "⨯"),
-            Value::None => write!(f, " "),
+            Player::Naught => write!(f, "○"),
+            Player::Cross => write!(f, "⨯"),
+            Player::None => write!(f, " "),
         }
     }
 }
 
-fn print_row(values: &[Value; 3], row_label: String) {
+fn print_row(values: &[Player; 3], row_label: String) {
     println!("|          |          |          |");
     println!("|     {}    |     {}    |     {}    |   {}", values[0], values[1], values[2], row_label);
     println!("|          |          |          |");
 }
 
-fn print_grid(grid: &[[Value; 3]; 3]) {
+fn print_grid(grid: &[[Player; 3]; 3]) {
     println!("     1           2          3     ");
     println!("+----------+----------+----------+");
     print_row(&grid[0], String::from("A"));
@@ -115,6 +115,9 @@ fn main() {
             game.reset_board();
             game.display();
             continue;
+        } else if choice == "q" {
+            println!("Thank you for playing!");
+            break;
         }
 
         // The user should enter a two digit coordinate for the cell like A2 or 3B. Splitting on "" produces an empty
