@@ -61,7 +61,7 @@ impl Board {
     (0..3).contains(&row) & (0..3).contains(&col)
   }
 
-  fn get_cell(&self, row: usize, col: usize) -> Option<&Player> {
+  pub fn get_cell(&self, row: usize, col: usize) -> Option<&Player> {
       if !self.cell_in_range(&row, &col) {
         return None;
       }
@@ -100,8 +100,7 @@ impl std::fmt::Display for CellValue {
   }
 }
 
-
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Player {
     Naught,
     Cross
