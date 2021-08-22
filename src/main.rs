@@ -29,12 +29,17 @@ fn main() {
             },
             Ok(io::Choice::Cell((row, col))) => {
                 game.play_turn(row, col);
-                let t = game.find_winner();
-                if t.is_some() {
-                    println!("Winner!");
-                }
             },
             Err(message) => println!("Error: {}", message)
+        }
+
+        match game.state {
+            game::GameState::Won(player) => {
+                println!("Player {} won!", player);
+                game.display();
+                break;
+            },
+            game::GameState::InProgress => ()
         }
 
         game.display();

@@ -12,9 +12,15 @@ const WINNING_COMBOS: [[(usize, usize); 3]; 8]  = [
   [(2,0), (1,1), (0,2)],
 ];
 
+pub enum GameState {
+  InProgress,
+  Won(Player),
+}
+
 pub struct Game {
     pub player: Player,
     pub board: Board,
+    pub state: GameState
 }
 
 impl Game {
@@ -22,18 +28,19 @@ impl Game {
     pub fn new() -> Self {
         Game { 
             board: Board::new(),
-            player: Player::Cross
+            player: Player::Cross,
+            state: GameState::InProgress,
         }
     }
 
     pub fn display(&self) {
-        println!(" ");
-        println!(" ");
-        println!(" ");
-        println!(" ");
-        println!(" ");
-        println!(" ");
         self.board.display();
+        println!(" ");
+        println!(" ");
+        println!(" ");
+        println!(" ");
+        println!(" ");
+        println!(" ");
     }
 
     pub fn reset_board(&mut self) {
@@ -46,6 +53,11 @@ impl Game {
             Ok(()) => self.toggle_player(),
             Err(err) => println!("{}", err)
         }
+
+        self.state = match self.find_winner() {
+          Some(&player) => GameState::Won(player),
+          None => GameState::InProgress
+        };
     }
 
     fn toggle_player(&mut self) {
