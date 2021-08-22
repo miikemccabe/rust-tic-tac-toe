@@ -61,6 +61,19 @@ impl Board {
     (0..3).contains(&row) & (0..3).contains(&col)
   }
 
+  pub fn board_is_full(&self) -> bool {
+    let mut full = true;
+    for row in &self.grid {
+      for cell in row {
+        if *cell == CellValue::Empty {
+          full = false;
+        }
+      }
+    }
+
+    full
+  }
+
   pub fn get_cell(&self, row: usize, col: usize) -> Option<&Player> {
       if !self.cell_in_range(&row, &col) {
         return None;
@@ -85,7 +98,7 @@ impl Board {
   }
 }
 
-#[derive(Debug)]
+#[derive(Eq, PartialEq, Debug)]
 enum CellValue {
   Player(Player),
   Empty

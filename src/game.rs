@@ -15,6 +15,7 @@ const WINNING_COMBOS: [[(usize, usize); 3]; 8]  = [
 pub enum GameState {
   InProgress,
   Won(Player),
+  Drawn
 }
 
 pub struct Game {
@@ -56,7 +57,13 @@ impl Game {
 
         self.state = match self.find_winner() {
           Some(&player) => GameState::Won(player),
-          None => GameState::InProgress
+          None => {
+            if self.board_is_full() {
+              GameState::Drawn
+            } else {
+              GameState::InProgress
+            }
+          }
         };
     }
 
@@ -67,14 +74,19 @@ impl Game {
         }
     }
 
+    fn board_is_full(&self) -> bool {
+      self.board.board_is_full()
+    }
+
     pub fn find_winner(&self) -> Option<&Player> {
       let mut winner: Option<&Player> = None;
 
       for combo in WINNING_COMBOS {
-        // Get the player at the first cell of the first winning combo
+        // Get the player at the first cell of each winning combo
         let player = self.board.get_cell(combo[0].0, combo[0].1);
+        // Loop over each cell of the 3 cell winning combo
         for cell in combo {
-          // Get the value of each cell in the potential winning combo
+          // Get the value of the cell
           let current = self.board.get_cell(cell.0, cell.1);
           // If this cell matches the current player, we've got a potential winner
           if current.is_some() && player.is_some() && current.unwrap() == player.unwrap() {

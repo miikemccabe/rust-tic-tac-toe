@@ -39,7 +39,12 @@ fn main() {
                 game.display();
                 break;
             },
-            game::GameState::InProgress => ()
+            game::GameState::InProgress => (),
+            game::GameState::Drawn => {
+                println!("There are no winners here, only losers");
+                game.display();
+                break;
+            }
         }
 
         game.display();
